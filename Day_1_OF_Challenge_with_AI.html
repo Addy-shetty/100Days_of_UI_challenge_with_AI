@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo-Brutalism Login</title>
+    
+    <!-- Google Fonts: Space Grotesk for that geometric, neo-brutalist feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Neo-Brutalism Palette */
+            --bg-color: #f0f0f0;
+            --main-card-bg: #ffffff;
+            --accent-pink: #ff90e8;
+            --accent-blue: #23c5f5;
+            --accent-yellow: #ffc900;
+            --accent-purple: #90f5ff;
+            --black: #1a1a1a;
+            
+            /* Styling Variables */
+            --border-width: 3px;
+            --shadow-offset: 5px;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-color);
+            /* Simple dot pattern for background texture */
+            background-image: radial-gradient(var(--black) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--black);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Prevent scroll on desktop */
+        }
+
+        /* --- Main Container --- */
+        .login-wrapper {
+            display: flex;
+            width: 90%;
+            max-width: 1000px;
+            height: 85vh;
+            max-height: 700px;
+            background-color: var(--main-card-bg);
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--black);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Left Side: Form --- */
+        .form-section {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: var(--border-width) solid var(--black);
+            background-color: #fff;
+            overflow-y: auto;
+        }
+
+        .brand-header {
+            margin-bottom: 2rem;
+        }
+
+        .brand-header h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-header span {
+            background-color: var(--accent-yellow);
+            padding: 2px 8px;
+            border: 2px solid var(--black);
+            box-shadow: 2px 2px 0 var(--black);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Form Groups */
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            font-family: inherit;
+            font-size: 1rem;
+            border: var(--border-width) solid var(--black);
+            border-radius: 8px;
+            background-color: #f4f4f4;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:focus {
+            background-color: var(--accent-purple);
+            box-shadow: 3px 3px 0 var(--black);
+            transform: translate(-2px, -2px);
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: var(--border-width) solid var(--black);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+            margin-bottom: 1rem;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--black);
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px 0px var(--black);
+        }
+
+        .btn-primary:active {
+            transform: translate(var(--shadow-offset), var(--shadow-offset));
+            box-shadow: 0px 0px 0px 0px var(--black);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            box-shadow: 2px 2px 0 var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #eee;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: var(--black);
+            margin: 0 10px;
+        }
+
+        .form-footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: var(--black);
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        /* --- Right Side: Story/Illustration --- */
+        .story-section {
+            flex: 1;
+            background-color: var(--accent-pink);
+            border-left: var(--border-width) solid var(--black); /* Logical border, visually handled by wrapper */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            text-align: center;
+        }
+
+        /* Decorative Elements */
+        .sticker {
+            position: absolute;
+            background: var(--accent-yellow);
+            padding: 5px 15px;
+            border: 2px solid var(--black);
+            box-shadow: 3px 3px 0 var(--black);
+            font-weight: bold;
+            font-size: 0.8rem;
+            transform: rotate(10deg);
+            z-index: 2;
+        }
+        
+        .sticker-top { top: 20px; right: 20px; background: var(--accent-purple); }
+        .sticker-btm { bottom: 20px; left: 20px; }
+
+        /* Character Image Container */
+        .character-frame {
+            width: 280px;
+            height: 280px;
+            border: var(--border-width) solid var(--black);
+            border-radius: 50%; /* Circle for character */
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 8px 8px 0 var(--black);
+            margin-bottom: 2rem;
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .character-frame:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .character-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Story Text / Chat Bubble */
+        .story-box {
+            background: #fff;
+            border: var(--border-width) solid var(--black);
+            box-shadow: 5px 5px 0 var(--black);
+            padding: 1.5rem;
+            max-width: 320px;
+            position: relative;
+        }
+
+        .story-box::after {
+            /* Little triangle pointing up */
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 15px 15px 15px;
+            border-style: solid;
+            border-color: transparent transparent var(--black) transparent;
+        }
+        
+        .story-box::before {
+             /* Inner triangle for white bg */
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 12px 12px 12px;
+            border-style: solid;
+            border-color: transparent transparent #fff transparent;
+            z-index: 1;
+        }
+
+        .story-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .story-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .story-controls {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .story-btn {
+            background: var(--accent-yellow);
+            border: 2px solid var(--black);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        
+        .story-btn:hover {
+            transform: scale(1.1);
+            background: var(--black);
+            color: var(--accent-yellow);
+        }
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background-color: var(--accent-blue);
+            border: var(--border-width) solid var(--black);
+            padding: 1rem 2rem;
+            box-shadow: 4px 4px 0 var(--black);
+            font-weight: bold;
+            z-index: 100;
+            transition: transform 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                padding: 20px 0;
+                overflow-y: auto;
+            }
+
+            .login-wrapper {
+                flex-direction: column-reverse;
+                height: auto;
+                max-width: 500px;
+            }
+
+            .form-section {
+                border-right: none;
+                border-top: var(--border-width) solid var(--black);
+                padding: 2rem;
+            }
+            
+            .story-section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Element -->
+    <div id="toast" class="toast">
+        <span id="toast-icon">✅</span>
+        <span id="toast-message">Success message here</span>
+    </div>
+
+    <main class="login-wrapper">
+        <!-- Left Side: Form -->
+        <section class="form-section">
+            <div class="brand-header">
+                <h1>Log In</h1>
+                <span>Access the grid</span>
+            </div>
+
+            <form id="loginForm" novalidate>
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="user@neo.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="remember" style="width: auto; margin:0;">
+                    <label for="remember" style="margin:0; font-size: 0.9rem;">Remember this terminal</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enter System</button>
+
+                <div class="divider">OR</div>
+
+                <button type="button" class="btn btn-secondary" onclick="showToast('Guest access not allowed yet!', '⚠️')">
+                    <span>Continue as Guest</span>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <p>Lost your key? <a href="#" onclick="showToast('Reset link sent!', '📧')">Recover Access</a></p>
+            </div>
+        </section>
+
+        <!-- Right Side: Story & Character -->
+        <section class="story-section">
+            <div class="sticker sticker-top">New Arrival!</div>
+            
+            <!-- Character Image -->
+            <div class="character-frame">
+                <!-- Using a specific seed to get a consistent "human/character" image -->
+                <img src="https://picsum.photos/seed/neo-character-v1/400/400" alt="Character Avatar">
+            </div>
+
+            <!-- Story Box -->
+            <div class="story-box">
+                <h3 class="story-title" id="story-title">Meet "Atlas"</h3>
+                <p class="story-text" id="story-text">
+                    Atlas is a digital wanderer exploring the brutalist architecture of the old web. He collects forgotten passwords and lost pixels.
+                </p>
+                
+                <div class="story-controls">
+                    <button class="story-btn" onclick="prevStory()" aria-label="Previous Story">&larr;</button>
+                    <button class="story-btn" onclick="nextStory()" aria-label="Next Story">&rarr;</button>
+                </div>
+            </div>
+
+            <div class="sticker sticker-btm">Lvl. 99 Admin</div>
+        </section>
+    </main>
+
+    <script>
+        /* --- Story Logic --- */
+        const stories = [
+            {
+                title: "Meet 'Atlas'",
+                text: "Atlas is a digital wanderer exploring the brutalist architecture of the old web. He collects forgotten passwords and lost pixels.",
+                imgSeed: "neo-character-v1"
+            },
+            {
+                title: "The Mission",
+                text: "His goal? To restore color to the grayscale void. He needs a brave user to help him log in to the Mainframe.",
+                imgSeed: "neo-character-v2"
+            },
+            {
+                title: "The Reward",
+                text: "Legends say that whoever logs in successfully unlocks the secret stash of high-bandwidth cat memes.",
+                imgSeed: "neo-character-v3"
+            }
+        ];
+
+        let currentStoryIndex = 0;
+
+        const storyTitle = document.getElementById('story-title');
+        const storyText = document.getElementById('story-text');
+        const characterImg = document.querySelector('.character-frame img');
+
+        function updateStory(index) {
+            // Update text with a simple fade effect logic
+            storyTitle.style.opacity = 0;
+            storyText.style.opacity = 0;
+            
+            setTimeout(() => {
+                storyTitle.textContent = stories[index].title;
+                storyText.textContent = stories[index].text;
+                characterImg.src = `https://picsum.photos/seed/${stories[index].imgSeed}/400/400`;
+                
+                storyTitle.style.opacity = 1;
+                storyText.style.opacity = 1;
+            }, 200);
+        }
+
+        function nextStory() {
+            currentStoryIndex = (currentStoryIndex + 1) % stories.length;
+            updateStory(currentStoryIndex);
+        }
+
+        function prevStory() {
+            currentStoryIndex = (currentStoryIndex - 1 + stories.length) % stories.length;
+            updateStory(currentStoryIndex);
+        }
+
+        /* --- Form Logic --- */
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Basic Validation
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showToast("Please fill in all fields!", "🚫");
+                shakeForm();
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showToast("Invalid email format!", "📧");
+                shakeForm();
+                return;
+            }
+
+            // Simulate API call / Success
+            const btn = form.querySelector('.btn-primary');
+            const originalText = btn.textContent;
+            btn.textContent = "Authenticating...";
+            btn.style.backgroundColor = "var(--accent-purple)";
+
+            setTimeout(() => {
+                showToast(`Welcome back, ${email.split('@')[0]}!`, "🚀");
+                btn.textContent = originalText;
+                btn.style.backgroundColor = "var(--accent-blue)";
+                // Reset form
+                form.reset();
+            }, 1500);
+        });
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        /* --- Interaction Effects --- */
+        function shakeForm() {
+            const wrapper = document.querySelector('.form-section');
+            wrapper.style.transform = "translateX(5px)";
+            setTimeout(() => wrapper.style.transform = "translateX(-5px)", 50);
+            setTimeout(() => wrapper.style.transform = "translateX(5px)", 100);
+            setTimeout(() => wrapper.style.transform = "translateX(0)", 150);
+        }
+
+        /* --- Toast Notification System --- */
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        let toastTimeout;
+
+        function showToast(message, icon = "ℹ️") {
+            toastMsg.textContent = message;
+            toastIcon.textContent = icon;
+            toast.classList.add('visible');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Add subtle transition to text elements
+        storyTitle.style.transition = 'opacity 0.2s';
+        storyText.style.transition = 'opacity 0.2s';
+
+    </script>
+</body>
+</html>
