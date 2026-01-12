@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIZZ | Cyberpunk Checkout</title>
+    
+    <!-- Google Fonts for that Tech/Sci-Fi feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 25, 0.6);
+            --neon-cyan: #00f3ff;
+            --neon-pink: #bc13fe;
+            --neon-green: #0aff0a;
+            --text-main: #e0e0e0;
+            --grid-color: rgba(0, 243, 255, 0.1);
+            --border-width: 1px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: crosshair; /* Tech feel cursor */
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden; /* Immersive feel */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Cyberpunk Grid Background */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            perspective: 1000px;
+        }
+
+        /* CRT Scanline Effect Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* --- Main Layout --- */
+        .checkout-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            border: 1px solid var(--neon-cyan);
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Corner Accents */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            z-index: 10;
+        }
+        .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* --- Left Side: 3D Product Stage --- */
+        .product-stage {
+            flex: 1.2;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1000px; /* Essential for 3D effect */
+        }
+
+        .hologram-base {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px dashed var(--neon-pink);
+            border-radius: 50%;
+            transform: rotateX(70deg);
+            animation: spinGrid 10s linear infinite;
+            box-shadow: 0 0 15px var(--neon-pink);
+            z-index: 1;
+        }
+
+        /* The 3D Container that moves */
+        .shoe-3d-wrapper {
+            position: relative;
+            z-index: 2;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; /* Smooth follow */
+        }
+
+        .shoe-image {
+            width: 350px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.5));
+            transform: rotateZ(-15deg) translateY(20px);
+            /* Floating animation */
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .glitch-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan);
+            letter-spacing: 2px;
+        }
+
+        /* --- Right Side: Checkout Form --- */
+        .checkout-panel {
+            flex: 0.8;
+            padding: 3rem;
+            border-left: 1px solid var(--neon-cyan);
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(10,10,15,0.9) 100%);
+        }
+
+        .panel-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+        }
+
+        .panel-header p {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .product-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border: 1px solid #333;
+            margin-bottom: 2rem;
+        }
+
+        .summary-info h4 { font-size: 1.1rem; text-transform: uppercase; }
+        .summary-info span { color: var(--neon-green); font-size: 1.2rem; font-weight: bold; }
+        .summary-qty { border: 1px solid var(--neon-cyan); padding: 2px 8px; color: var(--neon-cyan); font-size: 0.8rem; }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            color: var(--neon-cyan);
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-bottom: 2px solid #333;
+            color: #fff;
+            padding: 10px 5px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: var(--neon-pink);
+            background: rgba(188, 19, 254, 0.05);
+        }
+
+        /* Payment Row */
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+        .row .input-group { flex: 1; }
+
+        /* Action Button */
+        .cyber-btn {
+            margin-top: 2rem;
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            text-align: center;
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .cyber-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Processing Overlay */
+        .processing-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .processing-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loader-text {
+            font-family: 'Orbitron';
+            color: var(--neon-green);
+            margin-top: 20px;
+            animation: blink 0.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes spinGrid {
+            0% { transform: rotateX(70deg) rotateZ(0deg); }
+            100% { transform: rotateX(70deg) rotateZ(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: rotateZ(-15deg) translateY(20px) translateZ(0); }
+            50% { transform: rotateZ(-15deg) translateY(0px) translateZ(20px); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checkout-container {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+                margin: 20px 0;
+            }
+            .product-stage {
+                min-height: 300px;
+                padding: 20px;
+            }
+            .checkout-panel {
+                border-left: none;
+                border-top: 1px solid var(--neon-cyan);
+            }
+            .shoe-image {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+
+    <main class="checkout-container">
+        <!-- Corners -->
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <!-- 3D Product Stage -->
+        <section class="product-stage" id="productStage">
+            <div class="glitch-text">RIZZ // V.2077</div>
+            
+            <!-- The 3D Moving Wrapper -->
+            <div class="shoe-3d-wrapper" id="shoeWrapper">
+                <!-- Using a high contrast sneaker image -->
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Cyberpunk Sneaker" class="shoe-image">
+            </div>
+
+            <!-- Spinning Grid Floor -->
+            <div class="hologram-base"></div>
+        </section>
+
+        <!-- Checkout Details -->
+        <section class="checkout-panel">
+            <div class="panel-header">
+                <h2>Secure Checkout</h2>
+                <p>ENCRYPTED CONNECTION // NODE: ALPHA</p>
+            </div>
+
+            <div class="product-summary">
+                <div class="summary-info">
+                    <h4>RIZZ X-1 NEON</h4>
+                    <span>$ 249.00</span>
+                </div>
+                <div class="summary-qty">QTY: 01</div>
+            </div>
+
+            <form id="checkoutForm">
+                <div class="input-group">
+                    <label>Cardholder Identity</label>
+                    <input type="text" placeholder="ALEX_MERCER" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" id="cardNum" required>
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Exp Date</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CVV</label>
+                        <input type="password" placeholder="•••" maxlength="3" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Shipping Node</label>
+                    <input type="text" placeholder="Sector 7, Neo-Tokyo" required>
+                </div>
+
+                <button type="submit" class="cyber-btn">Initialize Payment</button>
+            </form>
+        </section>
+
+        <!-- Processing Overlay -->
+        <div class="processing-overlay" id="processingOverlay">
+            <div style="font-size: 3rem; color: var(--neon-green);">●</div>
+            <div class="loader-text">PROCESSING TRANSACTION...</div>
+        </div>
+    </main>
+
+    <script>
+        /* --- 3D Parallax Effect Logic --- */
+        const stage = document.getElementById('productStage');
+        const shoeWrapper = document.getElementById('shoeWrapper');
+
+        stage.addEventListener('mousemove', (e) => {
+            const { offsetWidth: width, offsetHeight: height } = stage;
+            const { offsetX: x, offsetY: y } = e;
+
+            // Calculate rotation based on cursor position
+            // Rotate Y (left/right) and Rotate X (up/down)
+            // We divide by a factor to dampen the movement
+            const rotateY = ((x / width) - 0.5) * 40; // -20 to 20 deg
+            const rotateX = ((y / height) - 0.5) * -40; // -20 to 20 deg
+
+            shoeWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        // Reset when mouse leaves
+        stage.addEventListener('mouseleave', () => {
+            shoeWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        });
+
+        /* --- Payment Form Logic --- */
+        
+        // Credit Card Formatting
+        const cardInput = document.getElementById('cardNum');
+        cardInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            value = value.match(/.{1,4}/g)?.join(' ') || value; // Add space every 4 chars
+            e.target.value = value;
+        });
+
+        // Form Submission Simulation
+        const form = document.getElementById('checkoutForm');
+        const overlay = document.getElementById('processingOverlay');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show overlay
+            overlay.classList.add('active');
+
+            // Simulate Network Request
+            setTimeout(() => {
+                document.querySelector('.loader-text').innerText = "ORDER CONFIRMED // DISPATCHING DRONE";
+                document.querySelector('.loader-text').style.color = "var(--neon-cyan)";
+            }, 2000);
+
+            setTimeout(() => {
+                alert("Transaction Complete. Welcome to the future.");
+                location.reload();
+            }, 3500);
+        });
+
+        // Glitch effect on text hover
+        const glitchText = document.querySelector('.glitch-text');
+        glitchText.addEventListener('mouseover', () => {
+            let iterations = 0;
+            const interval = setInterval(() => {
+                glitchText.innerText = glitchText.innerText
+                    .split("")
+                    .map((letter, index) => {
+                        if(index < iterations) return glitchText.dataset.value || "RIZZ // V.2077";
+                        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
+                    })
+                    .join("");
+                
+                if(iterations >= 10) clearInterval(interval);
+                iterations += 1/2; 
+            }, 30);
+        });
+    </script>
+</body>
+</html>
