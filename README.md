@@ -14,18 +14,20 @@ This challenge is a personal commitment to:
 
 ```
 100Days_of_UI_challenge_with_AI/
-├── README.md
-├── CONTRIBUTING.md
+├── README.md              # Main documentation
+├── CONTRIBUTING.md        # Community guidelines
+├── QUICKSTART.md          # Quick start guide
+├── LICENSE                # MIT License
+├── index.md               # Challenge catalog
 ├── challenges/
-│   ├── day-001/
+│   ├── day-001/          # Example challenge
 │   │   ├── README.md
 │   │   ├── index.html
 │   │   ├── style.css
 │   │   └── script.js
-│   ├── day-002/
-│   │   └── ...
-│   └── ...
-└── index.md (Challenge catalog)
+│   └── day-XXX/          # Future challenges
+└── templates/
+    └── challenge-template/  # Reusable template
 ```
 
 ## 🚀 How to View Challenges
@@ -46,6 +48,10 @@ Each challenge includes a CodePen link in its README for live preview and intera
    cd challenges/day-001
    ```
 3. Open `index.html` in your browser
+
+## 🎬 Creating New Challenges
+
+Want to start a new challenge? Check out the [Quick Start Guide](./QUICKSTART.md) for step-by-step instructions on using the template.
 
 ## 📋 Challenge Catalog
 
