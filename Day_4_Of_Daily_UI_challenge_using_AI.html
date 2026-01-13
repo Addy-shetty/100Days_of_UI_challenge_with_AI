@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4: FX-991ES Glassmorphism Calculator</title>
+    
+    <!-- Fonts for that tech/scientific look -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0f0f13;
+            --glass-bg: rgba(20, 20, 20, 0.65);
+            --glass-border: rgba(255, 215, 0, 0.2); /* Yellow tint border */
+            --accent-yellow: #FFD700;
+            --accent-black: #1a1a1a;
+            --display-bg: #f4ea7e; /* Classic LCD color */
+            --text-black: #111;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            /* Abstract geometric background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 40%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* --- Main Layout Container --- */
+        .app-container {
+            display: flex;
+            width: 90%;
+            max-width: 1100px;
+            height: 85vh;
+            gap: 2rem;
+        }
+
+        /* --- Left: Calculator --- */
+        .calculator-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calculator {
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px var(--shadow-color);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header Branding */
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+        .brand { font-weight: 700; color: var(--accent-yellow); letter-spacing: 1px; }
+        .solar-panel {
+            width: 60px;
+            height: 15px;
+            background: #333;
+            border-radius: 4px;
+            border: 1px solid #555;
+        }
+
+        /* The LCD Display */
+        .display-container {
+            background-color: var(--display-bg);
+            border: 2px solid #555;
+            border-radius: 6px;
+            height: 90px;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-black);
+        }
+
+        .calculation-input {
+            font-size: 1.1rem;
+            text-align: right;
+            min-height: 24px;
+            opacity: 0.7;
+        }
+
+        .calculation-result {
+            font-size: 2.2rem;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* Keypad Grid */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            height: 45px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Button Colors */
+        .btn-func {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        
+        .btn-func:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .btn-op {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--accent-yellow);
+            font-weight: bold;
+        }
+
+        .btn-op:hover { background: rgba(0, 0, 0, 0.5); }
+
+        .btn-num {
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 1.1rem;
+        }
+
+        .btn-num:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .btn-eq {
+            background: var(--accent-yellow);
+            color: black;
+            font-weight: bold;
+            font-size: 1.2rem;
+            grid-column: span 1;
+        }
+
+        .btn-eq:hover {
+            background: #e6c200;
+            box-shadow: 0 0 10px var(--accent-yellow);
+        }
+
+        .btn-del {
+            background: #d32f2f;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .btn-ac {
+            background: #d32f2f;
+            color: white;
+        }
+
+        /* Shift/Alpha styling */
+        .btn-shift { color: #aaa; font-size: 0.8rem; }
+        .label-top { position: absolute; top: 4px; left: 5px; font-size: 0.6rem; color: #555; pointer-events: none; }
+
+        /* --- Right: Documentation Panel --- */
+        .doc-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            color: #ccc;
+        }
+
+        .doc-panel h2 {
+            color: var(--accent-yellow);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .doc-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .doc-section h3 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .doc-section ul {
+            list-style: none;
+        }
+
+        .doc-section li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .key-badge {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--accent-yellow);
+            color: var(--accent-yellow);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .example-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--display-bg);
+            margin-top: 5px;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+                height: 95vh;
+                overflow-y: auto;
+            }
+            .calculator-wrapper { flex: none; }
+            .calculator { max-width: 100%; }
+            .doc-panel { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- CALCULATOR SECTION -->
+        <section class="calculator-wrapper">
+            <div class="calculator">
+                <div class="calc-header">
+                    <span class="brand">FX-991ES PLUS</span>
+                    <div class="solar-panel"></div>
+                </div>
+
+                <div class="display-container">
+                    <div class="calculation-input" id="inputDisplay"></div>
+                    <div class="calculation-result" id="outputDisplay">0</div>
+                </div>
+
+                <!-- 5 Column Grid Layout mimicking Casio -->
+                <div class="keypad">
+                    <!-- Row 1 -->
+                    <button class="btn-shift" onclick="alert('Shift function not active in UI Demo')">SHIFT</button>
+                    <button class="btn-shift" onclick="alert('Alpha function not active in UI Demo')">ALPHA</button>
+                    <button class="btn-func" onclick="setMode()">MODE</button>
+                    <button class="btn-func" onclick="insert('√(')">√</button>
+                    <button class="btn-func" onclick="insert('^2')">x²</button>
+
+                    <!-- Row 2 -->
+                    <button class="btn-func" onclick="insert('^')">x^y</button>
+                    <button class="btn-func" onclick="insert('log(')">log</button>
+                    <button class="btn-func" onclick="insert('ln(')">ln</button>
+                    <button class="btn-func" onclick="insert('(')">(</button>
+                    <button class="btn-func" onclick="insert(')')">)</button>
+
+                    <!-- Row 3 -->
+                    <button class="btn-func" onclick="insert('sin(')">sin</button>
+                    <button class="btn-func" onclick="insert('cos(')">cos</button>
+                    <button class="btn-func" onclick="insert('tan(')">tan</button>
+                    <button class="btn-func" onclick="insert('π')">π</button>
+                    <button class="btn-eq" onclick="calculate()">=</button>
+
+                    <!-- Row 4 -->
+                    <button class="btn-num" onclick="insert('7')">7</button>
+                    <button class="btn-num" onclick="insert('8')">8</button>
+                    <button class="btn-num" onclick="insert('9')">9</button>
+                    <button class="btn-del" onclick="deleteLast()">DEL</button>
+                    <button class="btn-ac" onclick="clearDisplay()">AC</button>
+
+                    <!-- Row 5 -->
+                    <button class="btn-num" onclick="insert('4')">4</button>
+                    <button class="btn-num" onclick="insert('5')">5</button>
+                    <button class="btn-num" onclick="insert('6')">6</button>
+                    <button class="btn-op" onclick="insert('*')">×</button>
+                    <button class="btn-op" onclick="insert('/')">÷</button>
+
+                    <!-- Row 6 -->
+                    <button class="btn-num" onclick="insert('1')">1</button>
+                    <button class="btn-num" onclick="insert('2')">2</button>
+                    <button class="btn-num" onclick="insert('3')">3</button>
+                    <button class="btn-op" onclick="insert('+')">+</button>
+                    <button class="btn-op" onclick="insert('-')">-</button>
+
+                    <!-- Row 7 -->
+                    <button class="btn-num" onclick="insert('0')">0</button>
+                    <button class="btn-num" onclick="insert('.')">.</button>
+                    <button class="btn-num" onclick="insert('×10^')">EXP</button>
+                    <button class="btn-op" onclick="insert('%')">%</button>
+                    <button class="btn-func" onclick="insert('Ans')">Ans</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENTATION SECTION -->
+        <section class="doc-panel">
+            <h2>User Manual</h2>
+            
+            <div class="doc-section">
+                <h3>📌 Basic Operations</h3>
+                <ul>
+                    <li><span class="key-badge">AC</span> Clear the entire calculation history.</li>
+                    <li><span class="key-badge">DEL</span> Delete the last character entered.</li>
+                    <li><span class="key-badge">=</span> Execute the calculation.</li>
+                </ul>
+            </div>
+
+            <div class="doc-section">
+                <h3>📐 Scientific Functions</h3>
+                <ul>
+                    <li>
+                        <span class="key-badge">sin</span>
+                        <div>
+                            Calculates Sine.<br>
+                            <span class="example-box">sin(30) → 0.5</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="key-badge">^</span>
+                        <div>
+                            Power of.<br>
+                            <span class="example-box">2 ^ 3 → 8</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="key-badge">√</span>
+                        <div>
+                            Square Root.<br>
+                            <span class="example-box">√(16) → 4</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="key-badge">log</span>
+                        <div>
+                            Base-10 Logarithm.<br>
+                            <span class="example-box">log(100) → 2</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="doc-section">
+                <h3>🔢 Advanced Examples</h3>
+                <ul>
+                    <li>
+                        <span class="key-badge">π</span>
+                        <div>
+                            Constant Pi.<br>
+                            <span class="example-box">2 × π → 6.283...</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="key-badge">%</span>
+                        <div>
+                            Percentage.<br>
+                            <span class="example-box">200 × 10 % → 20</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div style="font-size: 0.8rem; color: #666; margin-top: 20px;">
+                * Note: Trigonometric functions are in <strong>Degrees</strong> mode by default for this simulation.
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const inputDisplay = document.getElementById('inputDisplay');
+        const outputDisplay = document.getElementById('outputDisplay');
+        
+        let expression = '';
+        let result = 0;
+
+        function insert(val) {
+            // Prevent multiple decimals in a row
+            if (val === '.' && expression.slice(-1) === '.') return;
+
+            // Formatting for display
+            if (val === '*') expression += '×';
+            else if (val === '/') expression += '÷';
+            else if (val === '×10^') expression += 'E';
+            else if (val === '^2') expression += '^2';
+            else if (val === '^') expression += '^';
+            else expression += val;
+
+            inputDisplay.innerText = expression;
+        }
+
+        function clearDisplay() {
+            expression = '';
+            inputDisplay.innerText = '';
+            outputDisplay.innerText = '0';
+        }
+
+        function deleteLast() {
+            expression = expression.slice(0, -1);
+            inputDisplay.innerText = expression;
+        }
+
+        function setMode() {
+            alert("Mode setting locked to COMP (General Calculation) for this demo.");
+        }
+
+        function calculate() {
+            try {
+                // Convert visual symbols to JS Math logic
+                let evalString = expression
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/E/g, 'e') // Scientific notation
+                    .replace(/\^2/g, '**2') // Square
+                    .replace(/\^/g, '**') // Power
+                    .replace(/%/g, '/100'); // Percentage (Basic implementation)
+
+                // Handling Trig Functions with Degree Conversion
+                // We use regex to wrap the number inside sin/cos/tan to convert to radians
+                // JS Math.sin takes Radians. Casio usually defaults to Degrees.
+                
+                // Regex to find sin(x) and convert to Math.sin((x * Math.PI/180))
+                // This is a simplified parser for demonstration
+                
+                // Helper function to convert degrees to radians inside the string
+                const toRad = (match, func, content) => {
+                    return `Math.${func}((${content})*Math.PI/180)`;
+                };
+
+                // Replace sin, cos, tan
+                evalString = evalString.replace(/(sin|cos|tan)\(([^)]+)\)/g, toRad);
+                
+                // Replace sqrt
+                evalString = evalString.replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)');
+                
+                // Replace log (base 10)
+                evalString = evalString.replace(/log\(([^)]+)\)/g, 'Math.log10($1)');
+                
+                // Replace ln (base e)
+                evalString = evalString.replace(/ln\(([^)]+)\)/g, 'Math.log($1)');
+
+                // Calculate
+                let result = eval(evalString);
+
+                // Formatting result
+                if (result === undefined || isNaN(result)) {
+                    outputDisplay.innerText = "Error";
+                } else {
+                    // Round to avoid floating point errors like 0.000000000004
+                    outputDisplay.innerText = parseFloat(result.toFixed(8)).toString();
+                }
+
+            } catch (e) {
+                outputDisplay.innerText = "Syntax Error";
+                console.error(e);
+            }
+        }
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if(!isNaN(key) || key === '.') insert(key);
+            if(key === '+') insert('+');
+            if(key === '-') insert('-');
+            if(key === '*') insert('*');
+            if(key === '/') insert('/');
+            if(key === 'Enter') calculate();
+            if(key === 'Backspace') deleteLast();
+            if(key === 'Escape') clearDisplay();
+        });
+
+    </script>
+</body>
+</html>
