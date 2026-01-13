@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIZZ | Minimalist Footwear</title>
+    
+    <!-- Google Fonts: Inter for that clean, modern aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-black: #111111;
+            --text-gray: #888888;
+            --accent-color: #000000; /* Stark black for minimalism */
+            --container-width: 1200px;
+            --transition-speed: 0.8s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-black);
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-black);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text-black);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* --- Main Hero Showcase --- */
+        .showcase {
+            display: flex;
+            max-width: var(--container-width);
+            height: 80vh; /* Takes up most of the screen */
+            margin: 0 auto;
+            padding: 0 5%;
+            position: relative;
+            align-items: center;
+        }
+
+        /* Left: Controls & Info */
+        .info-panel {
+            flex: 1;
+            padding-right: 2rem;
+            z-index: 2;
+        }
+
+        .counter {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .shoe-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            opacity: 0; /* JS will animate this */
+            transform: translateY(20px);
+        }
+
+        .shoe-desc {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--text-black);
+            background: var(--text-black);
+            color: #fff;
+        }
+
+        /* Right: 3D-ish Image Stage */
+        .visual-panel {
+            flex: 1.2;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* Subtle background blob */
+            background: radial-gradient(circle at center, #f9f9f9 0%, transparent 70%);
+        }
+
+        .shoe-container {
+            width: 100%;
+            max-width: 600px;
+            height: 500px;
+            position: relative;
+        }
+
+        .shoe-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* The unique clip-path setup */
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+            will-change: transform, clip-path;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+        }
+
+        /* --- Animation Classes --- */
+        
+        /* Entering from Right (Next Click) */
+        .slide-enter-right {
+            animation: wipeInRight var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .slide-exit-left {
+            animation: wipeOutLeft var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Entering from Left (Prev Click) */
+        .slide-enter-left {
+            animation: wipeInLeft var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .slide-exit-right {
+            animation: wipeOutRight var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Text Fade In */
+        .text-fade-in {
+            animation: fadeInUp 0.6s ease 0.3s forwards;
+        }
+
+        /* Keyframes */
+        @keyframes wipeInRight {
+            0% { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); transform: translateX(50px) scale(0.9); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); transform: translateX(0) scale(1); }
+        }
+
+        @keyframes wipeOutLeft {
+            0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); transform: translateX(0) scale(1); }
+            100% { clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); transform: translateX(-50px) scale(0.9); }
+        }
+
+        @keyframes wipeInLeft {
+            0% { clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); transform: translateX(-50px) scale(0.9); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); transform: translateX(0) scale(1); }
+        }
+
+        @keyframes wipeOutRight {
+            0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); transform: translateX(0) scale(1); }
+            100% { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); transform: translateX(50px) scale(0.9); }
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #eee;
+            margin-top: auto;
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .showcase {
+                flex-direction: column-reverse; /* Image on top on mobile */
+                height: auto;
+                padding-top: 2rem;
+                padding-bottom: 4rem;
+            }
+
+            .info-panel {
+                padding-right: 0;
+                text-align: center;
+                margin-top: 2rem;
+            }
+
+            .shoe-title {
+                font-size: 2.5rem;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+
+            .visual-panel {
+                width: 100%;
+                height: 300px;
+            }
+
+            .shoe-container {
+                max-width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">RIZZ.</div>
+        <div class="nav-links">
+            <a href="#">Men</a>
+            <a href="#">Women</a>
+            <a href="#">Journal</a>
+        </div>
+    </nav>
+
+    <main class="showcase">
+        <!-- Info Section -->
+        <section class="info-panel">
+            <span class="counter" id="counter">01 / 03</span>
+            <h1 class="shoe-title" id="shoeTitle">Rizz Air-K</h1>
+            <p class="shoe-desc" id="shoeDesc">Engineered for the urban explorer. Lightweight mesh meets reinforced soles for ultimate durability in the concrete jungle.</p>
+            <span class="price" id="shoePrice">$140.00</span>
+            
+            <div class="controls">
+                <button class="nav-btn" id="prevBtn" aria-label="Previous Shoe">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <button class="btn-primary" id="addToCart">Add to Cart</button>
+                <button class="nav-btn" id="nextBtn" aria-label="Next Shoe">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Visual Section -->
+        <section class="visual-panel">
+            <div class="shoe-container">
+                <img src="" alt="Shoe" class="shoe-img" id="shoeImage">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2024 RIZZ Inc. Designed with AI.
+    </footer>
+
+    <script>
+        // --- Data Source ---
+        const shoes = [
+            {
+                id: 1,
+                title: "Rizz Air-K",
+                desc: "Engineered for the urban explorer. Lightweight mesh meets reinforced soles for ultimate durability in the concrete jungle.",
+                price: "$140.00",
+                img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            },
+            {
+                id: 2,
+                title: "Rizz Runner X",
+                desc: "The future of speed. Aerodynamic silhouette with energy-return technology that propels you forward with every step.",
+                price: "$185.00",
+                img: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            },
+            {
+                id: 3,
+                title: "Rizz High-Top",
+                desc: "Classic silhouette redefined. Premium leather uppers and elevated sole units for a look that transitions from day to night.",
+                price: "$160.00",
+                img: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            }
+        ];
+
+        // --- DOM Elements ---
+        const shoeImage = document.getElementById('shoeImage');
+        const shoeTitle = document.getElementById('shoeTitle');
+        const shoeDesc = document.getElementById('shoeDesc');
+        const shoePrice = document.getElementById('shoePrice');
+        const counter = document.getElementById('counter');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const addToCartBtn = document.getElementById('addToCart');
+
+        let currentIndex = 0;
+        let isAnimating = false;
+
+        // --- Init ---
+        function init() {
+            updateContent(0, 'init');
+            handleResize(); // Initial responsive check
+        }
+
+        // --- Core Update Function ---
+        function updateContent(index, direction) {
+            // Update Image Source first
+            shoeImage.src = shoes[index].img;
+            
+            // Update Text
+            counter.innerText = `0${index + 1} / 0${shoes.length}`;
+            
+            // Add animation classes based on direction
+            resetAnimations();
+            
+            // Force reflow to restart CSS animations
+            void shoeImage.offsetWidth; 
+
+            if (direction === 'next') {
+                shoeImage.classList.add('slide-enter-right');
+            } else if (direction === 'prev') {
+                shoeImage.classList.add('slide-enter-left');
+            } else {
+                // Initial load
+                shoeImage.style.opacity = 1;
+            }
+
+            // Animate Text Elements (Fade Up)
+            [shoeTitle, shoeDesc, shoePrice].forEach(el => {
+                el.classList.remove('text-fade-in');
+                void el.offsetWidth; // Trigger reflow
+                el.classList.add('text-fade-in');
+            });
+
+            // Set content after slight delay to sync with image slide
+            setTimeout(() => {
+                shoeTitle.innerText = shoes[index].title;
+                shoeDesc.innerText = shoes[index].desc;
+                shoePrice.innerText = shoes[index].price;
+            }, 200);
+        }
+
+        function resetAnimations() {
+            // Remove all animation classes
+            shoeImage.classList.remove('slide-enter-right', 'slide-enter-left', 'slide-exit-left', 'slide-exit-right');
+        }
+
+        // --- Navigation Handlers ---
+        function nextSlide() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // Exit animation for current
+            shoeImage.classList.remove('slide-enter-right'); 
+            // We don't strictly need exit logic on the same image element because we swap the src,
+            // but to make it smoother, we can just swap and enter.
+            // However, for true "swapping" feel, let's just handle the entry.
+
+            currentIndex = (currentIndex + 1) % shoes.length;
+            updateContent(currentIndex, 'next');
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, 800); // Matches CSS transition speed
+        }
+
+        function prevSlide() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            currentIndex = (currentIndex - 1 + shoes.length) % shoes.length;
+            updateContent(currentIndex, 'prev');
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, 800);
+        }
+
+        // --- Event Listeners ---
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Add to Cart Interaction
+        addToCartBtn.addEventListener('click', () => {
+            const originalText = addToCartBtn.innerText;
+            addToCartBtn.innerText = "Added!";
+            addToCartBtn.style.backgroundColor = "#4CAF50"; // Green success
+            addToCartBtn.style.transform = "scale(0.95)";
+            
+            setTimeout(() => {
+                addToCartBtn.innerText = originalText;
+                addToCartBtn.style.backgroundColor = ""; // Reset to CSS variable
+                addToCartBtn.style.transform = "scale(1)";
+            }, 1500);
+        });
+
+        // --- Responsiveness Handling via JS ---
+        // While CSS handles layout, JS can ensure the image aspect ratio or text size is optimal
+        function handleResize() {
+            const width = window.innerWidth;
+            if (width < 768) {
+                // Mobile adjustments if needed
+                shoeTitle.style.fontSize = "2.5rem";
+            } else {
+                shoeTitle.style.fontSize = "4.5rem";
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>
